@@ -1,0 +1,15 @@
+# Image for individual shopware-setup
+# Tag: 7.5.0-alpine
+# Copyright 2024 planlos.xyz
+#
+# Release: 02.04.2024 / 10:07 pm
+FROM varnish:7.5.0-alpine
+LABEL title="Varnish Shopware:latest" \
+      version="7.5.0-alpine" \
+      maintainer="planlos.xyz"
+
+
+COPY ./assets/default.vcl /etc/varnish/
+
+#Port for http
+EXPOSE 80
