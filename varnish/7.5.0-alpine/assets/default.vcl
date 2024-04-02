@@ -5,7 +5,7 @@ import std;
 # You should specify here all your app nodes and use round robin to select a backend
 backend default {
     .host = "shopware";
-    .port = "80";
+    .port = "8080";
 }
 
 # ACL for purgers IP. (This needs to contain app server ips)
