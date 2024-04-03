@@ -1,0 +1,205 @@
+# Image for individual shopware-setup
+# Tag: 6.6.0.1
+# Copyright 2024 planlos.xyz
+#
+# Release: 03.04.2024 / 11:35 pm
+FROM php:8.3.4-apache-bookworm
+LABEL title="Shopware 6 prod:6.6.0.1" \
+    version="8.3.4-apache-bookworm" \
+    maintainer="planlos.xyz"
+
+## ***********************************************************************
+##  BASE REQUIREMENTS
+## ***********************************************************************
+RUN ln -fs /usr/share/zoneinfo/Europe/Berlin /etc/localtime \
+    && apt-get install -y tzdata \
+    && dpkg-reconfigure --frontend noninteractive tzdata
+
+RUN apt update && apt upgrade -y
+RUN apt update \
+    && apt install -y sudo \
+    && apt install -y wget \
+    && apt install -y curl \
+    && apt install -y unzip \
+    && apt install -y bzip2 \
+    && apt install -y ssmtp \
+    && apt install -y lsof \
+    && apt install -y nano \
+    && apt install -y zlib1g-dev \
+    && apt install libicu-dev \
+    && apt install zip \
+    && apt install libzip-dev \
+    && apt install libpng-dev \
+    && apt install libjpeg-dev \
+    && apt install libfreetype6-dev \
+    && apt install curl \
+    && apt install zip \
+    && apt install libxml2-dev \
+    && apt install libcurl4-openssl-dev \
+    && apt install openssl \
+    && apt install libsodium-dev \
+    && apt install git \
+    &&  apt install -y libxml2-dev
+
+## ***********************************************************************
+##  APP SERVER REQUIREMENTS
+## ***********************************************************************
+RUN docker-php-ext-configure gd --with-jpeg=/usr/include/ --with-freetype=/usr/include/
+RUN docker-php-ext-install gd && docker-php-ext-enable gd
+RUN docker-php-ext-install dom && docker-php-ext-enable dom
+RUN docker-php-ext-install ctype && docker-php-ext-enable ctype
+RUN docker-php-ext-install iconv && docker-php-ext-enable iconv
+RUN docker-php-ext-install curl && docker-php-ext-enable curl
+RUN docker-php-ext-install fileinfo && docker-php-ext-enable fileinfo
+RUN docker-php-ext-install pdo_mysql && docker-php-ext-enable pdo_mysql
+RUN docker-php-ext-install session && docker-php-ext-enable session
+RUN docker-php-ext-install simplexml && docker-php-ext-enable simplexml
+RUN docker-php-ext-install xml && docker-php-ext-enable xml
+RUN docker-php-ext-install opcache && docker-php-ext-enable opcache
+RUN docker-php-ext-install sodium && docker-php-ext-enable sodium
+RUN docker-php-ext-install intl && docker-php-ext-enable intl
+RUN docker-php-ext-install zip && docker-php-ext-enable zip
+RUN docker-php-ext-install mysqli && docker-php-ext-enable mysqli
+
+# set up php-redis-extension
+RUN pecl install -o -f redis &&  rm -rf /tmp/pear &&  docker-php-ext-enable redis
+RUN docker-php-ext-install  soap && docker-php-ext-enable soap
+
+# activate apache mods
+RUN a2enmod ssl rewrite headers proxy proxy_balancer proxy_http
+
+# disable all sites
+RUN a2dissite *
+
+# copy needed configurations
+COPY ./assets/ports.conf /etc/apache2
+COPY ./assets/app.conf /etc/apache2/sites-available
+COPY ./assets/install.conf /etc/apache2/sites-available
+
+##
+RUN chmod -R 7777 /var/www/html && chown -R www-data:www-data /var/www/html
+RUN cd /var/www/html
+RUN apt install -y wget
+RUN wget https://github.com/shopware/web-recovery/releases/latest/download/shopware-installer.phar.php
+
+RUN a2ensite install
+
+
+
+
+
+
+     
+
+
+
+
+## Apache Server
+RUN apt install -y apache2
+RUN && apt install -y libapache2-mod-fcgid \
+      && apt install -y software-properties-common \
+      && a2enmod headers \
+      && a2enmod rewrite \
+      && a2enmod expires \
+      && a2enmod proxy \
+      && a2enmod proxy_http \
+      && a2enmod proxy_wstunnel \
+      && a2enmod actions \
+      && a2enmod fcgid \
+      && a2enmod alias \
+      && a2enmod proxy_fcgi \
+      && a2enmod http2 \
+      && sudo a2enconf http2 \
+      && sudo a2dismod mpm_prefork > /dev/null 2>&1 \
+      && sudo a2enmod mpm_event > /dev/null 2>&1 \
+      && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+
+ADD ./config/apache/apache2.conf /etc/apache2/apache2.conf
+ADD ./config/apache/ports.conf /etc/apache2/ports.conf
+ADD ./config/apache/sites.conf /etc/apache2/sites-enabled/000-default.conf
+
+
+## PHP engine
+RUN apt update \
+      && apt install -y php8.3-fpm \
+      && apt install -y php8.3-gd \
+      && apt install -y php8.3-iconv \
+      && apt install -y php8.3-intl \
+      && apt install -y php8.3-xml \
+      && apt install -y php8.3-mbstring \
+      && apt install -y php8.3-pdo \
+      && apt install -y php8.3-mysql \
+      && apt install -y php8.3-curl \
+      && apt install -y php8.3-cli \
+      && apt install -y php8.3-ldap \
+      && apt install -y php8.3-pgsql \
+      && apt install -y php8.3-gettext \
+      && apt install -y php8.3-zip \
+      && apt install -y php8.3-soap \
+      && apt install -y php8.3-bcmath \
+      && apt install -y php8.3-imap \
+      && apt install -y php8.3-redis \
+      && apt install -y php8.3-amqp \
+      && apt install -y php8.3-apcu \
+      && apt install -y php8.3-pcov \
+      && apt install -y dh-php \
+      && apt install -y libpcre3 libpcre3-dev \
+      && cat /tmp/general.ini >| /etc/php/8.3/fpm/conf.d/01-general.ini \
+      && cat /tmp/general.ini >| /etc/php/8.3/cli/conf.d/01-general.ini \
+      && cat /tmp/cli.ini >| /etc/php/8.3/cli/conf.d/01-general-cli.ini \
+      && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+
+
+
+
+
+
+ADD ./config/apache/http2.conf /etc/apache2/conf-available/http2.conf
+
+RUN apt-get update \
+    && apt-get install -y apache2 \
+    && apt-get install -y libapache2-mod-fcgid \
+    && apt-get install -y software-properties-common \
+    && LC_ALL=C.UTF-8 add-apt-repository ppa:ondrej/php \
+    && a2enmod headers \
+    && a2enmod rewrite \
+    && a2enmod expires \
+    && a2enmod proxy \
+    && a2enmod proxy_http \
+    && a2enmod proxy_wstunnel \
+    && a2enmod actions \
+    && a2enmod fcgid \
+    && a2enmod alias \
+    && a2enmod proxy_fcgi \
+    && a2enmod http2 \
+    && sudo a2enconf http2 \
+    && sudo a2dismod mpm_prefork > /dev/null 2>&1 \
+    && sudo a2enmod mpm_event > /dev/null 2>&1 \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+
+ADD ./config/apache/apache2.conf /etc/apache2/apache2.conf
+ADD ./config/apache/ports.conf /etc/apache2/ports.conf
+ADD ./config/apache/sites.conf /etc/apache2/sites-enabled/000-default.conf
+
+
+
+RUN mkdir -p /var/www/.ssh \
+    && rm -rf /var/www/.ssh/id_rsa; true  \
+    && rm -rf /var/www/.ssh/id_rsa.pub; true  \
+    && ssh-keygen -t rsa -b 4096 -f /var/www/.ssh/id_rsa -C "Shopware Container" -P ""  \
+    && chown -R www-data:www-data /var/www/.ssh \
+    && chmod 0700 /var/www/.ssh
+
+
+
+
+
+
+
+
+
+
+
+
+COPY ../assets/default.vcl /etc/varnish/
+
