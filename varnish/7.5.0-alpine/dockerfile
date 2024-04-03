@@ -4,7 +4,7 @@
 #
 # Release: 02.04.2024 / 10:07 pm
 FROM varnish:7.5.0-alpine
-LABEL title="Varnish Shopware:latest" \
+LABEL title="Varnish Shopware:7.5.0-alpine" \
       version="7.5.0-alpine" \
       maintainer="planlos.xyz"
 
