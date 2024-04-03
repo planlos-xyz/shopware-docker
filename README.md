@@ -46,7 +46,7 @@ docker run -d \
 -v app_media:/var/www/html/public/media \
 -v app_sitemap:/var/www/html/public/sitemap \
 -v app_theme:/var/www/html/public/theme \
--v app_thumbnail:/var/www/html/public/theme \
+-v app_thumbnail:/var/www/html/public/thumbnail \
 -v app_bundles:/var/www/html/public/bundles \
 -v app_files:/var/www/html/files \
 --restart=always \
