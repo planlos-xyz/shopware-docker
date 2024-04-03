@@ -27,6 +27,7 @@ docker run -d \
 -i \
 -t \
 --net dckr-bridge \
+-v redis_data:/data \
 --restart=always \
 --privileged \
 shopware_redis:latest
@@ -37,7 +38,7 @@ shopware_redis:latest
 
 ```
 docker run -d \
---name=shopware \
+--name=shopware_app \
 -i \
 -t \
 --net dckr-bridge \
