@@ -4,7 +4,7 @@ import std;
 
 # You should specify here all your app nodes and use round robin to select a backend
 backend default {
-    .host = "shopware";
+    .host = "shopware_app";
     .port = "8080";
 }
 
