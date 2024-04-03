@@ -4,9 +4,9 @@
 #
 # Release: 03.04.2024 / 08:20 am
 
-FROM redis:7.2.4-apline
+FROM redis:7.2.4-alpine
 LABEL title="Redis Shopware:latest" \
-      version="7.2.4-apline" \
+      version="7.2.4-alpine" \
       maintainer="planlos.xyz"
 
 #COPY ./assets/redis.conf /usr/local/etc/redis/redis.conf
