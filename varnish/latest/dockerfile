@@ -2,7 +2,7 @@
 # Tag: latest
 # Copyright 2024 planlos.xyz
 #
-# Release: 02.04.2024 / 10:07 pm
+# Release: 04.04.2024 / 09:55 pm
 FROM varnish:7.5.0-alpine
 LABEL title="Varnish Shopware:latest" \
       version="7.5.0-alpine" \

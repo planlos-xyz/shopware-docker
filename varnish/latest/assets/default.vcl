@@ -1,4 +1,4 @@
-vcl 4.1;
+vcl 4.0;
 
 import std;
 
@@ -12,8 +12,8 @@ backend default {
 acl purgers {
     "127.0.0.1";
     "localhost";
-    "shopware";    
     "::1";
+    "shopware_app";
 }
 
 sub vcl_recv {
